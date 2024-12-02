@@ -1,6 +1,6 @@
 # AoC 2024
 
-[![Go Tests](https://github.com/kaveenr/aoc24/actions/workflows/tests.yml/badge.svg)](https://github.com/kaveenr/aoc23/actions/workflows/tests.yml)
+[![Go Tests](https://github.com/kaveenr/aoc24/actions/workflows/tests.yml/badge.svg)](https://github.com/kaveenr/aoc24/actions/workflows/tests.yml)
 
 ## Prerequsites
 
@@ -18,7 +18,6 @@ Available targets:
 - run day=<day_number>: Run the code for a specific day
 - test: Run tests
 - bench: Run benchmarks
-- new day=<day_number>: Create from template
 - scrape year=<year> day=<day_number>: Scrape puzzle and input from site
 - scrape-all year=<year> day=<day_number>: Scrape from day 1 to specified
 - answer year=<year> day=<day_number> part=<part> answer=<answer>: Answer puzzle
