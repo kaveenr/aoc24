@@ -38,13 +38,13 @@ func Part2(input string) (result int, err error) {
 }
 
 func isValid(update []int, rules map[int][]int) (valid bool) {
-	for updatedIdx := 1; updatedIdx < len(update); updatedIdx++ {
-		prior, current := update[updatedIdx-1], update[updatedIdx]
-		if !slices.Contains(rules[current], prior) {
-			return
+	return slices.IsSortedFunc(update, func(i, j int) int {
+		if slices.Contains(rules[i], j) {
+			return 1
+		} else {
+			return -1
 		}
-	}
-	return true
+	})
 }
 
 func correctUpdate(update []int, rules map[int][]int) (corrected []int) {

@@ -30,6 +30,15 @@ bench:
 year = $(shell env TZ=EST date +"%Y")
 day = $(shell env TZ=EST date +"%-d")
 
+new:
+	@mkdir day$(day)
+	@cp template/dayn.tmpl day$(day)/day$(day).go
+	@cp template/dayn_test.tmpl day$(day)/day$(day)_test.go
+	@sed -i '' 's/ayN/ay$(day)/g' day$(day)/day$(day).go
+	@sed -i '' 's/ayN/ay$(day)/g' day$(day)/day$(day)_test.go
+	@echo "Created from template ./day$(day)/"
+	@make scrape
+
 answer:
 	@curl -s -X 'POST' 'https://adventofcode.com/$(year)/day/$(day)/answer' \
 		-b "session=${AOC_SESSION}" \
