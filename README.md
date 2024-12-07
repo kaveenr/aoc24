@@ -18,6 +18,7 @@ Available targets:
 - run day=<day_number>: Run the code for a specific day
 - test: Run tests
 - bench: Run benchmarks
+- new year=<year> day=<day_number>: Create from template and scrape
 - scrape year=<year> day=<day_number>: Scrape puzzle and input from site
 - scrape-all year=<year> day=<day_number>: Scrape from day 1 to specified
 - answer year=<year> day=<day_number> part=<part> answer=<answer>: Answer puzzle
