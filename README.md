@@ -1,15 +1,16 @@
 # AoC 2024
 
 [![Go Tests](https://github.com/kaveenr/aoc24/actions/workflows/tests.yml/badge.svg)](https://github.com/kaveenr/aoc24/actions/workflows/tests.yml)
+[![Go Report](https://goreportcard.com/badge/github.com/kaveenr/aoc24)](https://goreportcard.com/report/github.com/kaveenr/aoc24)
 
-## Prerequsites
+## Prerequisites
 
 1. GNU + Darwin/Linux enviroment
 2. Go installed
 3. Curl / Pandoc installed for scraping (optional)
 4. Make `.env` file from `.env.sample` (optional)
 
-## Instuctions
+## Instructions
 
 ```sh
 $ make
