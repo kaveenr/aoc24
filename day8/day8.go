@@ -6,7 +6,7 @@ import (
 
 func Part1(input string) (result int, err error) {
 	area, antennas := parseInput(input)
-	eligiblePairs := groupAntennasByFreq(antennas)
+	eligiblePairs := makeAntennaPairs(antennas)
 
 	uniqueAntinode := make(map[vec]bool)
 	for _, resonantPair := range eligiblePairs {
@@ -26,7 +26,7 @@ func Part1(input string) (result int, err error) {
 
 func Part2(input string) (result int, err error) {
 	area, antennas := parseInput(input)
-	eligiblePairs := groupAntennasByFreq(antennas)
+	eligiblePairs := makeAntennaPairs(antennas)
 
 	uniqueAntinode := make(map[vec]bool)
 	for _, resonantPair := range eligiblePairs {
@@ -58,11 +58,6 @@ type vec struct {
 	col int
 }
 
-type antenna struct {
-	vec
-	frq string
-}
-
 func (loc *vec) outOfBounds(area vec) bool {
 	if loc.row < 0 || loc.row >= area.row {
 		return true
@@ -73,7 +68,8 @@ func (loc *vec) outOfBounds(area vec) bool {
 	return false
 }
 
-func parseInput(input string) (area vec, antennas []antenna) {
+func parseInput(input string) (area vec, antennas map[string][]vec) {
+	antennas = make(map[string][]vec)
 	input = strings.TrimSpace(input)
 	rows := strings.Split(input, "\n")
 	for rowIdx, row := range rows {
@@ -86,12 +82,13 @@ func parseInput(input string) (area vec, antennas []antenna) {
 					row: len(rows),
 					col: len(row),
 				}
-				antennas = append(antennas, antenna{
-					vec: vec{
-						row: rowIdx,
-						col: colIdx,
-					},
-					frq: string(char),
+				frq := string(char)
+				if _, ok := antennas[frq]; !ok {
+					antennas[frq] = make([]vec, 0)
+				}
+				antennas[frq] = append(antennas[frq], vec{
+					row: rowIdx,
+					col: colIdx,
 				})
 			}
 		}
@@ -99,17 +96,9 @@ func parseInput(input string) (area vec, antennas []antenna) {
 	return
 }
 
-func groupAntennasByFreq(antennas []antenna) (eligiblePairs [][]antenna) {
-	groupedByFrq := make(map[string][]antenna)
-	for _, cur := range antennas {
-		if _, ok := groupedByFrq[cur.frq]; !ok {
-			groupedByFrq[cur.frq] = make([]antenna, 0)
-		}
-		groupedByFrq[cur.frq] = append(groupedByFrq[cur.frq], cur)
-	}
-
+func makeAntennaPairs(antennas map[string][]vec) (eligiblePairs [][]vec) {
 	// Iterate and make eligible channel pairs
-	for _, antennas := range groupedByFrq {
+	for _, antennas := range antennas {
 		for curAntennaIdx, curAntenna := range antennas {
 			for cmpAntennaIdx, cmpAntenna := range antennas {
 				// TODO: check if in line of sight (didn't need it)
@@ -117,7 +106,7 @@ func groupAntennasByFreq(antennas []antenna) (eligiblePairs [][]antenna) {
 				if curAntennaIdx == cmpAntennaIdx {
 					continue
 				}
-				eligiblePairs = append(eligiblePairs, []antenna{curAntenna, cmpAntenna})
+				eligiblePairs = append(eligiblePairs, []vec{curAntenna, cmpAntenna})
 			}
 		}
 	}
