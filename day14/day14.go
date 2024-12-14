@@ -38,13 +38,48 @@ func Part1(input string) (result int, err error) {
 	return quadScore[0] * quadScore[1] * quadScore[2] * quadScore[3], nil
 }
 
+var (
+	moveVectors = []vec{
+		{-1, 0}, // Up
+		{1, 0},  // Down
+		{0, -1}, // Left
+		{0, 1},  // Right
+	}
+)
+
 func Part2(input string) (result int, err error) {
 
 	size, robots := parseInput(input)
 
-	for seconds := 0; seconds < 3600*2; seconds++ {
+	cellIndex := func(v vec) int {
+		return size.col*v.row + v.col
+	}
+
+	for seconds := 0; true; seconds++ {
 		tick(robots, size)
-		viz(size, robots, seconds+1)
+
+		// Check with union find for clusters > 200
+		robotMap := make(map[vec]bool)
+		for _, robot := range robots {
+			robotMap[robot.pos] = true
+		}
+		uf := newUnionFind(size.row * size.col)
+		for pos := range robotMap {
+			for _, move := range moveVectors {
+				next := pos.add(move)
+				if _, ok := robotMap[next]; !ok {
+					continue
+				}
+				uf.union(cellIndex(pos), cellIndex(next))
+			}
+		}
+		for _, robot := range robots {
+			if uf.getSize(cellIndex(robot.pos)) > 200 {
+				result = seconds + 1
+				viz(size, robots, result)
+				return result, err
+			}
+		}
 	}
 
 	return
@@ -66,7 +101,6 @@ func tick(robots []*entry, size vec) {
 			nextLoc.col = nextLoc.col - size.col
 		}
 		robot.pos = nextLoc
-
 	}
 }
 
@@ -95,9 +129,9 @@ func parseInput(input string) (size vec, robots []*entry) {
 }
 
 func viz(size vec, robots []*entry, second int) {
-	dc := gg.NewContext(size.row, size.col)
+	dc := gg.NewContext(size.col, size.row)
 	for _, robot := range robots {
-		dc.DrawPoint(float64(robot.pos.row), float64(robot.pos.col), 1)
+		dc.DrawPoint(float64(robot.pos.col), float64(robot.pos.row), 1)
 		dc.SetRGB(0, 1, 0)
 		dc.Fill()
 	}
@@ -119,4 +153,46 @@ func (v vec) add(x vec) (n vec) {
 		row: v.row + x.row,
 		col: v.col + x.col,
 	}
+}
+
+// Union find from day 12 with size now!
+
+type unionFind struct {
+	parent []int
+	size   []int
+}
+
+func newUnionFind(size int) (uf *unionFind) {
+	uf = &unionFind{
+		parent: make([]int, size),
+		size:   make([]int, size),
+	}
+	for i := 0; i < size; i++ {
+		uf.parent[i] = i
+		uf.size[i] = 1
+	}
+
+	return
+}
+
+func (u *unionFind) find(x int) (parent int) {
+	if u.parent[x] != x {
+		u.parent[x] = u.find(u.parent[x])
+	}
+	return u.parent[x]
+}
+
+func (u *unionFind) union(x, y int) {
+	rootX, rootY := u.find(x), u.find(y)
+	if rootX == rootY {
+		return
+	}
+
+	u.parent[rootX] = rootY
+	u.size[rootY] += u.size[rootX]
+}
+
+func (u *unionFind) getSize(x int) int {
+	root := u.find(x)
+	return u.size[root]
 }

@@ -30,23 +30,19 @@ func Test_Day14_Part1(t *testing.T) {
 }
 
 func Test_Day14_Part2(t *testing.T) {
-	_, err := day14.Part2(string(myPuzzleInput))
+	result, err := day14.Part2(string(myPuzzleInput))
 	if err != nil {
 		t.Errorf("error: %s", err)
 	}
-	t.Log("Visual Assertion Required 👀")
-	t.Log("7093 is the answer btw 🎄")
+	expected := 7093
+	if result != expected {
+		t.Errorf("expected %d, got %d", expected, result)
+	}
 }
 
 func Benchmark_Day14_Part1(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		day14.Part1(testInput)
-	}
-}
-
-func Benchmark_Day14_Part2(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		day14.Part2(testInput)
 	}
 }
 
